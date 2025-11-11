@@ -1,16 +1,25 @@
-import { useState } from 'react'
+import { useState } from "react";  
 import './App.css'
-import ArbitraryList from './components/itemlist'
+import MenuPage from "./components/Menu_tmp/Menu";
+import Header from "./components/header/Header"
+import Footer from "./components/footer/Footer"
 
-function App() {
+
+export default function App() {
+  const [cartCount, setCartCount] = useState(0);
+  const [cartTotal, setCartTotal] = useState(0);
+
+  function handleAddToCart(price, qty) {
+    const q = Math.max(1, Number(qty) || 1);
+    setCartCount(c => c + q);
+    setCartTotal(t => t + price * q);
+  }
 
   return (
-    <div>
-      <h1>My list</h1>
-      <ArbitraryList />
-    </div>
-
+  <>
+    <Header count={cartCount} total={cartTotal}/>
+    <MenuPage onAddToCart={handleAddToCart}  />
+    <Footer />
+  </> 
   )
 }
-
-export default App
