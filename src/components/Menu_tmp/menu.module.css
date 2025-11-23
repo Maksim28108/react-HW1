@@ -58,15 +58,14 @@
   border: 1px solid #e5e7eb;
   background: #f9fafb;
   color: #6b7280;
-  cursor: not-allowed;
+  cursor: pointer;
 }
 
-.menuTab:first-child {
+.menuTabActive {
   background: #38cfd0;
   color: #fff;
   border-color: #38cfd0;
 }
-
 
 .menuCounter {
   margin-top: 16px;

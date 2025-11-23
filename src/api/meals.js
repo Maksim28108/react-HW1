@@ -1,38 +1,20 @@
-
-
 export async function fetchMeals() {
-  const url = import.meta.env.VITE_MEALS_URL?.trim();
-  const res = await fetch(url, { headers: { Accept: "application/json" } });
+  const URL = import.meta.env.VITE_MEALS_URL;           
+  if (!URL) throw new Error('VITE_MEALS_URL is not defined');
 
-  const ct = res.headers.get("content-type") || "";
-  if (!ct.includes("application/json")) {
-    const text = await res.text();
-    throw new Error(`expected JSON, got ${res.status} ${text.slice(0, 100)}`);
-  }
+  const res = await fetch(URL);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-  const data = await res.json();
+  const raw = await res.json();
 
-  const pick = (...vals) =>
-    vals.map(v => (typeof v === "string" ? v.trim() : "")).find(Boolean);
-
-  const PLACEHOLDER_DESC =
-    "Lorem ipsum is simply dummy text of the printing and typesetting industry.";
-
-  return data.map((x, i) => {
-    const title = pick(
-      x.meal, x.title, x.name, x.mealTitle, x.label, x.dish, x.product, x.food
-    ) || `Item ${i + 1}`;
-
-    const image = pick(x.img, x.image, x.photo, x.picture, x.avatar) || "";
-
-    const price = Number(x.price ?? x.amount ?? x.cost ?? 0);
-
-    return {
-      id: x.id ?? i,
-      title,
-      image,
-      description: PLACEHOLDER_DESC, 
-      price,
-    };
-  });
+  return raw.map((m) => ({
+    id: m.id,
+    title: m.meal,                       
+    price: Number(m.price),             
+    image: m.img,                      
+    category: m.category,                
+    description:
+      'Lorem ipsum is simply dummy text of the printing and typesetting industry.',
+  }));
 }
+

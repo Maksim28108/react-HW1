@@ -1,15 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchMeals } from "../../api/meals";
 import MealCard from "./MealCard";
 import styles from "./menu.module.css";
+
+const CATEGORIES = [
+  { label: "Dessert", value: "Dessert" },  
+  { label: "Dinner", value: "Dinner" },
+  { label: "Breakfast", value: "Breakfast" },
+];
 
 export default function MenuPage({ onAddToCart }) {
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [visible, setVisible] = useState(6);
-  const [total, setTotal] = useState(0);
-  const [count, setCount] = useState(0);
+  const [category, setCategory] = useState("Dessert");
 
   useEffect(() => {
     let cancelled = false;
@@ -24,17 +29,23 @@ export default function MenuPage({ onAddToCart }) {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => (cancelled = true);
+    return () => { cancelled = true; };
   }, []);
+
+  const filteredMeals = useMemo(
+    () =>
+      meals.filter(
+        (m) => (m.category ?? '').trim().toLowerCase() === category.toLowerCase()
+      ),
+    [meals, category]
+  );
+
+  const canSeeMore = visible < filteredMeals.length;
 
   function handleAdd(meal, qty) {
     const q = Math.max(1, Number(qty) || 1);
-    setTotal(t => t + meal.price * q);
-    setCount(c => c + q);
     onAddToCart?.(meal.price, q);
   }
-
-  const canSeeMore = visible < meals.length;
 
   return (
     <section className={styles.globalSection}>
@@ -47,9 +58,17 @@ export default function MenuPage({ onAddToCart }) {
             </p>
 
             <div className={styles.menuTabs}>
-              {["Desert", "Dinner", "Breakfast"].map(x => (
-                <button key={x} className={styles.menuTab} disabled aria-disabled="true">
-                  {x}
+              {CATEGORIES.map(c => (
+                <button
+                  key={c.value}
+                  type="button"
+                  className={`${styles.menuTab} ${category === c.value ? styles.menuTabActive : ""}`}
+                  onClick={() => {
+                    setCategory(c.value);
+                    setVisible(6);          
+                  }}
+                >
+                  {c.label}
                 </button>
               ))}
             </div>
@@ -61,24 +80,31 @@ export default function MenuPage({ onAddToCart }) {
           {!loading && !error && (
             <>
               <div className={styles.menuGrid}>
-                {meals.slice(0, visible).map(m => (
+                {filteredMeals.slice(0, visible).map(m => (
                   <div key={m.id} className={styles.gridItem}>
                     <MealCard meal={m} onAdd={handleAdd} />
                   </div>
                 ))}
               </div>
 
-              {canSeeMore ? (
+              {filteredMeals.length === 0 ? (
+                <p className={styles.menuMore} style={{ color: "#6b7280" }}>
+                  no items in this category
+                </p>
+              ) : canSeeMore ? (
                 <div className={styles.menuMore}>
-                  <button className={styles.menuMoreBtn} onClick={() => setVisible(v => Math.min(v + 6, meals.length))}>
+                  <button
+                    className={styles.menuMoreBtn}
+                    onClick={() => setVisible(v => Math.min(v + 6, filteredMeals.length))}
+                  >
                     See more
                   </button>
                 </div>
-              ) : meals.length > 0 ? (
+              ) : (
                 <p className={styles.menuMore} style={{ color: "#6b7280" }}>
                   no more items
                 </p>
-              ) : null}
+              )}
             </>
           )}
         </section>
@@ -86,3 +112,4 @@ export default function MenuPage({ onAddToCart }) {
     </section>
   );
 }
+
