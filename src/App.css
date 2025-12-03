@@ -1,6 +1,10 @@
+body {
+  font-family: "Inter", sans-serif;
+}
+
 #root {
-    max-width: 1440px;
-    width: 100%;
-    margin: 0 auto;
-    background: #fff;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  background: #fff;
 }
