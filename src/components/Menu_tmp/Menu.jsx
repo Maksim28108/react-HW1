@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchMeals } from "../../api/meals";
 import MealCard from "./MealCard";
 import styles from "./menu.module.css";
+import Button from "../button/Button";
 
 export default function MenuPage({ onAddToCart }) {
   const [meals, setMeals] = useState([]);
@@ -12,19 +13,34 @@ export default function MenuPage({ onAddToCart }) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
+    
     (async () => {
       try {
         setLoading(true);
-        const data = await fetchMeals();
-        if (!cancelled) setMeals(data);
+        setError("");
+
+        const data = await fetchMeals(controller.signal);
+        setMeals(data);
+
       } catch (e) {
-        if (!cancelled) setError(e.message || "load error");
+        if (
+          e.name === "AbortError" ||
+          e.message === "signal is aborted without a reason"
+        ){
+          return
+        }
+
+        setError(e.message || "load error");
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
     })();
-    return () => (cancelled = true);
+
+
+    return () => {
+      controller.abort()
+    };
   }, []);
 
   function handleAdd(meal, qty) {
@@ -70,9 +86,12 @@ export default function MenuPage({ onAddToCart }) {
 
               {canSeeMore ? (
                 <div className={styles.menuMore}>
-                  <button className={styles.menuMoreBtn} onClick={() => setVisible(v => Math.min(v + 6, meals.length))}>
+                  <Button
+                    className={styles.menuMoreBtn}
+                    onClick={() => setVisible((v) => Math.min(v + 6, meals.length))}
+                  >
                     See more
-                  </button>
+                  </Button>
                 </div>
               ) : meals.length > 0 ? (
                 <p className={styles.menuMore} style={{ color: "#6b7280" }}>

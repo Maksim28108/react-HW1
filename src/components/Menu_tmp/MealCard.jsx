@@ -1,7 +1,10 @@
+import { useState } from "react";
 import styles from "./menu.module.css";
 import placeholder from "../../assets/placeholderburger.png";
+import Button from "../button/Button";
 
 export default function MealCard({ meal, onAdd }) {
+  const [qty, setQty] = useState(1);
   return (
     <article className={styles.mealCard}>
       <img
@@ -22,12 +25,18 @@ export default function MealCard({ meal, onAdd }) {
             className={styles.mealQty}
             type="number"
             min="1"
-            defaultValue="1"
-            onChange={(e) => (meal.__qty = Math.max(1, Number(e.target.value) || 1))}
+            value={qty}
+            onChange={(e) =>
+              setQty(Math.max(1, Number(e.target.value) || 1))
+            }
           />
-          <button className={styles.mealAddBtn} onClick={() => onAdd(meal, meal.__qty ?? 1)}>
-            Add to card
-          </button>
+          <Button
+            className = {styles.mealAddBtn}
+            onClick = {() => onAdd(meal, qty)}
+          >
+            Add to cart
+          </Button>
+
         </div>
       </div>
 
