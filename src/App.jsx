@@ -1,16 +1,8 @@
-import { useState } from 'react'
 import './App.css'
-import ArbitraryList from './components/itemlist'
+import { MainPage } from './pages/mainpage/MainPage'
 
-function App() {
-
+export function App(){
   return (
-    <div>
-      <h1>My list</h1>
-      <ArbitraryList />
-    </div>
-
+    <MainPage />
   )
 }
-
-export default App
