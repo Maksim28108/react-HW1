@@ -2,44 +2,57 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchMeals } from "../../api/meals";
 import MealCard from "./MealCard";
 import styles from "./menu.module.css";
-
-const CATEGORIES = [
-  { label: "Dessert", value: "Dessert" },  
-  { label: "Dinner", value: "Dinner" },
-  { label: "Breakfast", value: "Breakfast" },
-];
+import Button from "../button/Button";
 
 export default function MenuPage({ onAddToCart }) {
   const [meals, setMeals] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [visible, setVisible] = useState(6);
-  const [category, setCategory] = useState("Dessert");
+  const [category, setCategory] = useState("");
 
   useEffect(() => {
     let cancelled = false;
+
     (async () => {
       try {
         setLoading(true);
         const data = await fetchMeals();
-        if (!cancelled) setMeals(data);
+
+        if (cancelled) return;
+
+        setMeals(data);
+
+        const uniqueCategories = Array.from(
+          new Set(
+            data
+              .map((m) => (m.category ?? "").trim())
+              .filter(Boolean)
+          )
+        ).map((c) => ({ label: c, value: c }));
+
+        setCategories(uniqueCategories);
+
+        if (uniqueCategories.length > 0) {
+          setCategory(uniqueCategories[0].value);
+        }
       } catch (e) {
         if (!cancelled) setError(e.message || "load error");
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filteredMeals = useMemo(
-    () =>
-      meals.filter(
-        (m) => (m.category ?? '').trim().toLowerCase() === category.toLowerCase()
-      ),
+    () => meals.filter((m) => m.category === category),
     [meals, category]
   );
-
   const canSeeMore = visible < filteredMeals.length;
 
   function handleAdd(meal, qty) {
@@ -54,33 +67,40 @@ export default function MenuPage({ onAddToCart }) {
           <section className={styles.menuHero}>
             <h1 className={styles.menuTitle}>Browse our menu</h1>
             <p className={styles.menuSubtitle}>
-              Use our menu to place an order online, or phone our store to place a pickup order. Fast and fresh food.
+              Use our menu to place an order online, or phone our store
+              to place a pickup order. Fast and fresh food.
             </p>
 
             <div className={styles.menuTabs}>
-              {CATEGORIES.map(c => (
-                <button
+              {categories.map((c) => (
+                <Button
                   key={c.value}
                   type="button"
-                  className={`${styles.menuTab} ${category === c.value ? styles.menuTabActive : ""}`}
+                  className={`${styles.menuTab} ${
+                    category === c.value ? styles.menuTabActive : ""
+                  }`}
                   onClick={() => {
                     setCategory(c.value);
-                    setVisible(6);          
+                    setVisible(6);
                   }}
                 >
                   {c.label}
-                </button>
+                </Button>
               ))}
             </div>
           </section>
 
-          {loading && <p className={styles.menuLoading}>Loading…</p>}
-          {error && <p className={styles.menuError}>{error}</p>}
+          {loading && (
+            <p className={styles.menuLoading}>Loading…</p>
+          )}
+          {error && (
+            <p className={styles.menuError}>{error}</p>
+          )}
 
           {!loading && !error && (
             <>
               <div className={styles.menuGrid}>
-                {filteredMeals.slice(0, visible).map(m => (
+                {filteredMeals.slice(0, visible).map((m) => (
                   <div key={m.id} className={styles.gridItem}>
                     <MealCard meal={m} onAdd={handleAdd} />
                   </div>
@@ -88,20 +108,28 @@ export default function MenuPage({ onAddToCart }) {
               </div>
 
               {filteredMeals.length === 0 ? (
-                <p className={styles.menuMore} style={{ color: "#6b7280" }}>
+                <p
+                  className={styles.menuMore}
+                  style={{ color: "#6b7280" }}
+                >
                   no items in this category
                 </p>
               ) : canSeeMore ? (
                 <div className={styles.menuMore}>
-                  <button
+                  <Button
                     className={styles.menuMoreBtn}
-                    onClick={() => setVisible(v => Math.min(v + 6, filteredMeals.length))}
+                    onClick={() =>
+                      setVisible((v) => Math.min(v + 6, filteredMeals.length))
+                    }
                   >
                     See more
-                  </button>
+                  </Button>
                 </div>
               ) : (
-                <p className={styles.menuMore} style={{ color: "#6b7280" }}>
+                <p
+                  className={styles.menuMore}
+                  style={{ color: "#6b7280" }}
+                >
                   no more items
                 </p>
               )}
@@ -112,4 +140,3 @@ export default function MenuPage({ onAddToCart }) {
     </section>
   );
 }
-
