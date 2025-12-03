@@ -30,30 +30,27 @@ export default function MealCard({ meal, onAdd }) {
       <div className={styles.mealBody}>
         <h3 className={styles.mealTitle}>{meal.title}</h3>
         <p className={styles.mealDesc}>{meal.description}</p>
-      </div>
 
-      <div className={styles.mealActions}>
-        <input
-          className={styles.mealQty}
-          type="number"
-          min="1"
-          value={qty}
-          onChange={handleQtyChange}
-        />
+        <div className={styles.mealActions}>
+          <input
+            className={styles.mealQty}
+            type="number"
+            min="1"
+            value={qty}
+            onChange={handleQtyChange}
+          />
 
-        <Button
-          className={styles.mealAddBtn}
-          type="button"
-          onClick={handleAddClick}
-        >
-          Add to cart
-        </Button>
+          <Button
+            className={styles.mealAddBtn}
+            onClick={handleAddClick}
+          >
+            Add to cart
+          </Button>
+        </div>
       </div>
 
       <div className={styles.mealRight}>
-        <div className={styles.mealPrice}>
-          ${meal.price?.toFixed(2)} USD
-        </div>
+        <div className={styles.mealPrice}>${meal.price?.toFixed(2)} USD</div>
       </div>
     </article>
   );

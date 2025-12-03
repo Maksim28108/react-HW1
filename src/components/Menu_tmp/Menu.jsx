@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchMeals } from "../../api/meals";
 import MealCard from "./MealCard";
-import styles from "./menu.module.css";
 import Button from "../button/Button";
+import styles from "./menu.module.css";
 
 export default function MenuPage({ onAddToCart }) {
   const [meals, setMeals] = useState([]);
@@ -11,23 +11,24 @@ export default function MenuPage({ onAddToCart }) {
   const [error, setError] = useState("");
   const [visible, setVisible] = useState(6);
   const [category, setCategory] = useState("");
+  const [total, setTotal] = useState(0);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     (async () => {
       try {
         setLoading(true);
-        const data = await fetchMeals();
+        setError("");
 
-        if (cancelled) return;
-
+        const data = await fetchMeals(controller.signal);
         setMeals(data);
 
         const uniqueCategories = Array.from(
           new Set(
             data
-              .map((m) => (m.category ?? "").trim())
+              .map((m) => m.category)
               .filter(Boolean)
           )
         ).map((c) => ({ label: c, value: c }));
@@ -38,14 +39,17 @@ export default function MenuPage({ onAddToCart }) {
           setCategory(uniqueCategories[0].value);
         }
       } catch (e) {
-        if (!cancelled) setError(e.message || "load error");
+        if (e.name === "AbortError") {
+          return;
+        }
+        setError(e.message || "load error");
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
     })();
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, []);
 
@@ -53,10 +57,15 @@ export default function MenuPage({ onAddToCart }) {
     () => meals.filter((m) => m.category === category),
     [meals, category]
   );
+
   const canSeeMore = visible < filteredMeals.length;
 
   function handleAdd(meal, qty) {
     const q = Math.max(1, Number(qty) || 1);
+
+    setTotal((t) => t + meal.price * q);
+    setCount((c) => c + q);
+
     onAddToCart?.(meal.price, q);
   }
 
@@ -67,8 +76,8 @@ export default function MenuPage({ onAddToCart }) {
           <section className={styles.menuHero}>
             <h1 className={styles.menuTitle}>Browse our menu</h1>
             <p className={styles.menuSubtitle}>
-              Use our menu to place an order online, or phone our store
-              to place a pickup order. Fast and fresh food.
+              Use our menu to place an order online, or phone our store to
+              place a pickup order. Fast and fresh food.
             </p>
 
             <div className={styles.menuTabs}>
@@ -119,7 +128,9 @@ export default function MenuPage({ onAddToCart }) {
                   <Button
                     className={styles.menuMoreBtn}
                     onClick={() =>
-                      setVisible((v) => Math.min(v + 6, filteredMeals.length))
+                      setVisible((v) =>
+                        Math.min(v + 6, filteredMeals.length)
+                      )
                     }
                   >
                     See more
