@@ -58,6 +58,10 @@
   border: 1px solid #e5e7eb;
   background: #f9fafb;
   color: #6b7280;
+  cursor: pointer;
+}
+
+.menuTabActive {
   cursor: not-allowed;
 }
 
@@ -123,7 +127,7 @@
   color: #6b7280;
   font-size: 14px;
   max-width: 320px;
-  max-height: 4.5rem; 
+  max-height: 4.5rem;
   overflow: hidden;
 }
 

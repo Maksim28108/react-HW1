@@ -1,24 +1,20 @@
-export async function fetchMeals(signal) {
-  const url = import.meta.env.VITE_MEALS_URL?.trim();
+export async function fetchMeals() {
+  const URL = import.meta.env.VITE_MEALS_URL;           
+  if (!URL) throw new Error('VITE_MEALS_URL is not defined');
 
-  const res = await fetch(url, {
-    headers: { Accept: "application/json" },
-    signal
-  });
+  const res = await fetch(URL);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-  if (!res.ok) {
-    throw new Error(`Failed to load meals: ${res.status}`);
-  }
+  const raw = await res.json();
 
-  const data = await res.json();
-
-  return data.map((x, i) => {
-    return {
-      id: x.id ?? i,
-      title: x.meal,
-      image: x.img,
-      description: x.instructions,
-      price: Number(x.price),
-    };
-  });
+  return raw.map((m) => ({
+    id: m.id,
+    title: m.meal,                       
+    price: Number(m.price),             
+    image: m.img,                      
+    category: m.category,                
+    description:
+      'Lorem ipsum is simply dummy text of the printing and typesetting industry.',
+  }));
 }
+

@@ -5,20 +5,31 @@ import Button from "../button/Button";
 
 export default function MealCard({ meal, onAdd }) {
   const [qty, setQty] = useState(1);
+
+  function handleQtyChange(e) {
+    const value = Math.max(1, Number(e.target.value) || 1);
+    setQty(value);
+  }
+
+  function handleAddClick() {
+    onAdd?.(meal, qty);
+  }
+
   return (
     <article className={styles.mealCard}>
       <img
         className={styles.mealImg}
         src={meal.image || placeholder}
         alt={meal.title}
-        onError={(e) => { e.currentTarget.src = placeholder; e.currentTarget.onerror = null; }}
+        onError={(e) => {
+          e.currentTarget.src = placeholder;
+          e.currentTarget.onerror = null;
+        }}
       />
 
       <div className={styles.mealBody}>
         <h3 className={styles.mealTitle}>{meal.title}</h3>
-        <p className={styles.mealDesc}>
-          {meal.description}
-        </p>
+        <p className={styles.mealDesc}>{meal.description}</p>
 
         <div className={styles.mealActions}>
           <input
@@ -26,17 +37,15 @@ export default function MealCard({ meal, onAdd }) {
             type="number"
             min="1"
             value={qty}
-            onChange={(e) =>
-              setQty(Math.max(1, Number(e.target.value) || 1))
-            }
+            onChange={handleQtyChange}
           />
+
           <Button
-            className = {styles.mealAddBtn}
-            onClick = {() => onAdd(meal, qty)}
+            className={styles.mealAddBtn}
+            onClick={handleAddClick}
           >
             Add to cart
           </Button>
-
         </div>
       </div>
 
