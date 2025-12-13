@@ -1,25 +1,28 @@
-import { useState } from "react";  
-import './App.css'
-import MenuPage from "./components/Menu_tmp/Menu";
-import Header from "./components/header/Header"
-import Footer from "./components/footer/Footer"
-
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Layout from "./components/layout/Layout";
+import Login from "./pages/login/Login";
+import Order from "./pages/order/Order";
+import RequireAuth from "./components/authorization/RequireAuth";
 
 export default function App() {
-  const [cartCount, setCartCount] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0);
-
-  function handleAddToCart(price, qty) {
-    const q = Math.max(1, Number(qty) || 1);
-    setCartCount(c => c + q);
-    setCartTotal(t => t + price * q);
-  }
-
   return (
-  <>
-    <Header count={cartCount} total={cartTotal}/>
-    <MenuPage onAddToCart={handleAddToCart}  />
-    <Footer />
-  </> 
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/login" element={<Login />} />
+
+          <Route
+            path="/order"
+            element={
+              <RequireAuth>
+                <Order />
+              </RequireAuth>
+            }
+          />
+
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
