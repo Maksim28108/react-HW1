@@ -2,12 +2,19 @@ import styles from "./header.module.css";
 import headerIcon from '../../assets/logoimage.svg'
 import cartIcon from '../../assets/cartimage.svg'
 import littlecart from '../../assets/littlecart.svg'
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase";
+import Button from "../button/Button";
 
 
 
 export default function Header({ count = 0, total = 0 }) {
     return (
     <header className={styles.header}>
+        <Button className={styles.logout} onClick={() => signOut(auth)}>
+            Logout
+        </Button>
+
         <div className={styles.container}>
             <a href="#" className={styles.logoWrap}>
                 <img src={headerIcon} alt="logo" className={styles.logo} />

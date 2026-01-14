@@ -1,62 +1,40 @@
 import { useEffect, useMemo, useState } from "react";
-import { fetchMeals } from "../../api/meals";
+import { useDispatch, useSelector } from "react-redux";
+import { loadMeals } from "../../store/mealsSlice";
 import MealCard from "./MealCard";
 import Button from "../button/Button";
-import styles from "./menu.module.css";
+import styles from "../Menu_tmp/menu.module.css";
 
 export default function MenuPage({ onAddToCart }) {
-  const [meals, setMeals] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const { items: meals, status, error } = useSelector((s) => s.meals);
+
   const [visible, setVisible] = useState(6);
   const [category, setCategory] = useState("");
   const [total, setTotal] = useState(0);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    const controller = new AbortController();
+    if (status === "idle") dispatch(loadMeals());
+  }, [status, dispatch]);
 
-    (async () => {
-      try {
-        setLoading(true);
-        setError("");
+  const categories = useMemo(() => {
+    const unique = Array.from(
+      new Set(meals.map((m) => m.category).filter(Boolean))
+    );
+    return unique.map((c) => ({ label: c, value: c }));
+  }, [meals]);
 
-        const data = await fetchMeals(controller.signal);
-        setMeals(data);
+  useEffect(() => {
+    if (!category && categories.length > 0) {
+      setCategory(categories[0].value);
+    }
+  }, [categories, category]);
 
-        const uniqueCategories = Array.from(
-          new Set(
-            data
-              .map((m) => m.category)
-              .filter(Boolean)
-          )
-        ).map((c) => ({ label: c, value: c }));
-
-        setCategories(uniqueCategories);
-
-        if (uniqueCategories.length > 0) {
-          setCategory(uniqueCategories[0].value);
-        }
-      } catch (e) {
-        if (e.name === "AbortError") {
-          return;
-        }
-        setError(e.message || "load error");
-      } finally {
-        setLoading(false);
-      }
-    })();
-
-    return () => {
-      controller.abort();
-    };
-  }, []);
-
-  const filteredMeals = useMemo(
-    () => meals.filter((m) => m.category === category),
-    [meals, category]
-  );
+  const filteredMeals = useMemo(() => {
+    if (!category) return meals;
+    return meals.filter((m) => m.category === category);
+  }, [meals, category]);
 
   const canSeeMore = visible < filteredMeals.length;
 
@@ -68,6 +46,8 @@ export default function MenuPage({ onAddToCart }) {
 
     onAddToCart?.(meal.price, q);
   }
+
+  const loading = status === "loading";
 
   return (
     <section className={styles.globalSection}>
@@ -99,12 +79,8 @@ export default function MenuPage({ onAddToCart }) {
             </div>
           </section>
 
-          {loading && (
-            <p className={styles.menuLoading}>Loading…</p>
-          )}
-          {error && (
-            <p className={styles.menuError}>{error}</p>
-          )}
+          {loading && <p className={styles.menuLoading}>Loading…</p>}
+          {error && <p className={styles.menuError}>{error}</p>}
 
           {!loading && !error && (
             <>
@@ -117,10 +93,7 @@ export default function MenuPage({ onAddToCart }) {
               </div>
 
               {filteredMeals.length === 0 ? (
-                <p
-                  className={styles.menuMore}
-                  style={{ color: "#6b7280" }}
-                >
+                <p className={styles.menuMore} style={{ color: "#6b7280" }}>
                   no items in this category
                 </p>
               ) : canSeeMore ? (
@@ -128,19 +101,14 @@ export default function MenuPage({ onAddToCart }) {
                   <Button
                     className={styles.menuMoreBtn}
                     onClick={() =>
-                      setVisible((v) =>
-                        Math.min(v + 6, filteredMeals.length)
-                      )
+                      setVisible((v) => Math.min(v + 6, filteredMeals.length))
                     }
                   >
                     See more
                   </Button>
                 </div>
               ) : (
-                <p
-                  className={styles.menuMore}
-                  style={{ color: "#6b7280" }}
-                >
+                <p className={styles.menuMore} style={{ color: "#6b7280" }}>
                   no more items
                 </p>
               )}
