@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import Input from "../../components/input/Input";
+
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -34,26 +36,28 @@ export default function LoginPage() {
 
       <form className={styles.card} onSubmit={onLogin}>
         <div className={styles.row}>
-          <label className={styles.label} htmlFor="email">User name</label>
-          <input
-            id="email"
-            className={styles.input}
-            type="email"
-            placeholder="test@gmail.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        <Input
+          id="email"
+          label="User name"
+          type="email"
+          value={email}
+          placeholder="test@gmail.com"
+          onChange={(e) => setEmail(e.target.value)}
+          labelClass={styles.label}
+          inputClass={styles.input}
+        />
         </div>
 
         <div className={styles.row}>
-          <label className={styles.label} htmlFor="password">Password</label>
-          <input
+          <Input
             id="password"
-            className={styles.input}
+            label="Password"
             type="password"
-            placeholder="123456"
             value={pass}
+            placeholder="123456"
             onChange={(e) => setPass(e.target.value)}
+            labelClass={styles.label}
+            inputClass={styles.input}
           />
         </div>
 
