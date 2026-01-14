@@ -10,7 +10,6 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/login" element={<Login />} />
-
           <Route
             path="/order"
             element={
@@ -19,7 +18,6 @@ export default function App() {
               </RequireAuth>
             }
           />
-
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Route>
       </Routes>
