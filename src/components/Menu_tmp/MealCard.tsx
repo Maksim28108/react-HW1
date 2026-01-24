@@ -1,20 +1,29 @@
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../store/orderSlice";
 import Button from "../button/Button";
 import placeholder from "../../assets/placeholderburger.png";
 import styles from "./menu.module.css";
+import { addToCart } from "../../store/orderSlice";
 
-export default function MealCard({ meal }) {
+export type Meal = {
+  id: string | number;
+  title: string;
+  price: number;
+  image?: string;
+  category?: string;
+  description?: string;
+};
+
+export default function MealCard({ meal }: { meal: Meal }) {
   const dispatch = useDispatch();
-  const [qty, setQty] = useState(1);
+  const [qty, setQty] = useState<number>(1);
 
-  function handleQtyChange(e) {
+  function handleQtyChange(e: ChangeEvent<HTMLInputElement>) {
     setQty(Math.max(1, Number(e.target.value) || 1));
   }
 
   function handleAddClick() {
-    dispatch(addToCart({ item: meal, qty }));
+    dispatch(addToCart({ item: meal, qty })); 
   }
 
   return (
@@ -31,12 +40,13 @@ export default function MealCard({ meal }) {
 
       <div className={styles.mealBody}>
         <h3 className={styles.mealTitle}>{meal.title}</h3>
+        <p className={styles.mealDesc}>{meal.description}</p>
 
         <div className={styles.mealActions}>
           <input
             className={styles.mealQty}
             type="number"
-            min="1"
+            min={1}
             value={qty}
             onChange={handleQtyChange}
           />
@@ -48,7 +58,9 @@ export default function MealCard({ meal }) {
       </div>
 
       <div className={styles.mealRight}>
-        <div className={styles.mealPrice}>${meal.price?.toFixed(2)} USD</div>
+        <div className={styles.mealPrice}>
+          ${Number(meal.price).toFixed(2)} USD
+        </div>
       </div>
     </article>
   );

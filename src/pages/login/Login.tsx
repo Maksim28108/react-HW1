@@ -1,29 +1,37 @@
 import styles from "./LoginPage.module.css";
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState, type FormEvent, type ChangeEvent } from "react";
+import { useNavigate, useLocation, type Location } from "react-router-dom";
 import { auth } from "../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Input from "../../components/input/Input";
+import Button from "../../components/button/Button";
+
+type LocationState = {
+  from?: {
+    pathname: string;
+  };
+};
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation() as Location & { state: LocationState };
 
   const from = location.state?.from?.pathname || "/";
 
-  const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
-  const [err, setErr] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [pass, setPass] = useState<string>("");
+  const [err, setErr] = useState<string>("");
 
-  const onLogin = async (e) => {
+  const onLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErr("");
 
     try {
       await signInWithEmailAndPassword(auth, email, pass);
       navigate(from, { replace: true });
-    } catch (e) {
-      setErr(e.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) setErr(error.message);
+      else setErr("Login failed");
     }
   };
 
@@ -45,7 +53,7 @@ export default function LoginPage() {
             type="email"
             value={email}
             placeholder="test@gmail.com"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
             labelClass={styles.label}
             inputClass={styles.input}
           />
@@ -58,7 +66,7 @@ export default function LoginPage() {
             type="password"
             value={pass}
             placeholder="123456"
-            onChange={(e) => setPass(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setPass(e.target.value)}
             labelClass={styles.label}
             inputClass={styles.input}
           />
@@ -67,12 +75,13 @@ export default function LoginPage() {
         {err && <p className={styles.error}>{err}</p>}
 
         <div className={styles.actions}>
-          <button className={styles.submit} type="submit">
+          <Button className={styles.submit} type="submit">
             Submit
-          </button>
-          <button className={styles.cancel} type="button" onClick={onCancel}>
+          </Button>
+
+          <Button className={styles.cancel} type="button" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
     </section>

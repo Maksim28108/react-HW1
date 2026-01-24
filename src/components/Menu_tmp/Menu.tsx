@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
+
 import {
   loadMeals,
   selectCategories,
@@ -12,16 +14,33 @@ import MealCard from "./MealCard";
 import Button from "../button/Button";
 import styles from "./menu.module.css";
 
-export default function MenuPage({ onAddToCart }) {
-  const dispatch = useDispatch();
+export type Meal = {
+  id: string | number;
+  title: string;
+  price: number;
+  image?: string;
+  category?: string;
+  description?: string;
+};
 
-  const meals = useSelector(selectMeals);
-  const status = useSelector(selectMealsStatus);
-  const error = useSelector(selectMealsError);
-  const categories = useSelector(selectCategories);
+type CategoryOption = { label: string; value: string };
 
-  const [visible, setVisible] = useState(6);
-  const [category, setCategory] = useState("");
+type Props = {
+  onAddToCart?: (price: number, qty: number) => void;
+};
+
+export default function MenuPage({ onAddToCart }: Props) {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const meals = useSelector<RootState, Meal[]>(selectMeals as any);
+  const status = useSelector<RootState, string>(selectMealsStatus as any);
+  const error = useSelector<RootState, string>(selectMealsError as any);
+  const categories = useSelector<RootState, CategoryOption[]>(
+    selectCategories as any,
+  );
+
+  const [visible, setVisible] = useState<number>(6);
+  const [category, setCategory] = useState<string>("");
 
   useEffect(() => {
     if (status === "idle") dispatch(loadMeals());
@@ -33,7 +52,6 @@ export default function MenuPage({ onAddToCart }) {
     }
   }, [categories, category]);
 
-
   const filteredMeals = useMemo(() => {
     if (!category) return meals;
     return meals.filter((m) => m.category === category);
@@ -42,9 +60,9 @@ export default function MenuPage({ onAddToCart }) {
   const canSeeMore = visible < filteredMeals.length;
   const loading = status === "loading";
 
-  function handleAdd(meal, qty) {
+  function handleAdd(meal: Meal, qty: number) {
     const q = Math.max(1, Number(qty) || 1);
-    onAddToCart?.(meal.price, q);
+    onAddToCart?.(Number(meal.price || 0), q);
   }
 
   return (
@@ -80,8 +98,8 @@ export default function MenuPage({ onAddToCart }) {
             <>
               <div className={styles.menuGrid}>
                 {filteredMeals.slice(0, visible).map((m) => (
-                  <div key={m.id} className={styles.gridItem}>
-                    <MealCard meal={m} onAdd={handleAdd} />
+                  <div key={String(m.id)} className={styles.gridItem}>
+                    <MealCard meal={m} />
                   </div>
                 ))}
               </div>
