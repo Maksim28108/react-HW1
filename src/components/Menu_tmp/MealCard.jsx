@@ -1,18 +1,20 @@
 import { useState } from "react";
-import styles from "./menu.module.css";
-import placeholder from "../../assets/placeholderburger.png";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../store/orderSlice";
 import Button from "../button/Button";
+import placeholder from "../../assets/placeholderburger.png";
+import styles from "./menu.module.css";
 
-export default function MealCard({ meal, onAdd }) {
+export default function MealCard({ meal }) {
+  const dispatch = useDispatch();
   const [qty, setQty] = useState(1);
 
   function handleQtyChange(e) {
-    const value = Math.max(1, Number(e.target.value) || 1);
-    setQty(value);
+    setQty(Math.max(1, Number(e.target.value) || 1));
   }
 
   function handleAddClick() {
-    onAdd?.(meal, qty);
+    dispatch(addToCart({ item: meal, qty }));
   }
 
   return (
@@ -29,7 +31,6 @@ export default function MealCard({ meal, onAdd }) {
 
       <div className={styles.mealBody}>
         <h3 className={styles.mealTitle}>{meal.title}</h3>
-        <p className={styles.mealDesc}>{meal.description}</p>
 
         <div className={styles.mealActions}>
           <input
@@ -40,10 +41,7 @@ export default function MealCard({ meal, onAdd }) {
             onChange={handleQtyChange}
           />
 
-          <Button
-            className={styles.mealAddBtn}
-            onClick={handleAddClick}
-          >
+          <Button className={styles.mealAddBtn} onClick={handleAddClick}>
             Add to cart
           </Button>
         </div>
