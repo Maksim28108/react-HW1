@@ -1,29 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadMeals } from "../../store/mealsSlice";
+import {
+  loadMeals,
+  selectCategories,
+  selectMeals,
+  selectMealsError,
+  selectMealsStatus,
+} from "../../store/mealsSlice";
+
 import MealCard from "./MealCard";
 import Button from "../button/Button";
-import styles from "../Menu_tmp/menu.module.css";
+import styles from "./menu.module.css";
 
 export default function MenuPage({ onAddToCart }) {
   const dispatch = useDispatch();
-  const { items: meals, status, error } = useSelector((s) => s.meals);
+
+  const meals = useSelector(selectMeals);
+  const status = useSelector(selectMealsStatus);
+  const error = useSelector(selectMealsError);
+  const categories = useSelector(selectCategories);
 
   const [visible, setVisible] = useState(6);
   const [category, setCategory] = useState("");
-  const [total, setTotal] = useState(0);
-  const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (status === "idle") dispatch(loadMeals());
   }, [status, dispatch]);
-
-  const categories = useMemo(() => {
-    const unique = Array.from(
-      new Set(meals.map((m) => m.category).filter(Boolean))
-    );
-    return unique.map((c) => ({ label: c, value: c }));
-  }, [meals]);
 
   useEffect(() => {
     if (!category && categories.length > 0) {
@@ -31,23 +33,19 @@ export default function MenuPage({ onAddToCart }) {
     }
   }, [categories, category]);
 
+
   const filteredMeals = useMemo(() => {
     if (!category) return meals;
     return meals.filter((m) => m.category === category);
   }, [meals, category]);
 
   const canSeeMore = visible < filteredMeals.length;
+  const loading = status === "loading";
 
   function handleAdd(meal, qty) {
     const q = Math.max(1, Number(qty) || 1);
-
-    setTotal((t) => t + meal.price * q);
-    setCount((c) => c + q);
-
     onAddToCart?.(meal.price, q);
   }
-
-  const loading = status === "loading";
 
   return (
     <section className={styles.globalSection}>
@@ -55,10 +53,6 @@ export default function MenuPage({ onAddToCart }) {
         <section className={styles.menuSection}>
           <section className={styles.menuHero}>
             <h1 className={styles.menuTitle}>Browse our menu</h1>
-            <p className={styles.menuSubtitle}>
-              Use our menu to place an order online, or phone our store to
-              place a pickup order. Fast and fresh food.
-            </p>
 
             <div className={styles.menuTabs}>
               {categories.map((c) => (

@@ -3,6 +3,8 @@ import mainpic from "../../assets/images/mainpic.png";
 import trustPilotIcon from "../../assets/images/trust.svg";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/button/Button";
+import { selectCartItems } from "../../store/orderSlice";
+import { useSelector } from "react-redux";
 
 
 export function MainPage() {
@@ -11,6 +13,9 @@ export function MainPage() {
   const rating = "4.8";
   const reviews = "2000+";
 
+ 
+  const cartItems = useSelector(selectCartItems);
+  console.log("CART:", cartItems);
   return (
     <>
       <div className={styles.page}>
@@ -20,7 +25,7 @@ export function MainPage() {
               <h1 className={styles.title}>
                 Beautiful food & takeaway,{" "}
                 <span className={styles.accent}>delivered</span> to your door.
-              </h1>
+              </h1> 
 
               <p className={styles.ptext}>
                 Lorem Ipsum is simply dummy text of the printing and typesetting

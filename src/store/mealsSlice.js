@@ -5,14 +5,14 @@ export const loadMeals = createAsyncThunk(
   "meals/loadMeals",
   async (_, { signal }) => {
     return await fetchMeals(signal);
-  }
+  },
 );
 
 const mealsSlice = createSlice({
   name: "meals",
   initialState: {
     items: [],
-    status: "idle", 
+    status: "idle",
     error: "",
   },
   reducers: {},
@@ -34,3 +34,19 @@ const mealsSlice = createSlice({
 });
 
 export default mealsSlice.reducer;
+
+export const selectMeals = (state) => state.meals.items;
+
+export const selectMealsStatus = (state) => state.meals.status;
+
+export const selectMealsError = (state) => state.meals.error;
+
+export const selectCategories = (state) => {
+  const meals = state.meals.items;
+
+  const unique = Array.from(
+    new Set(meals.map((m) => m.category).filter(Boolean)),
+  );
+
+  return unique.map((c) => ({ label: c, value: c }));
+};

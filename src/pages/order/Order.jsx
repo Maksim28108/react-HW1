@@ -1,31 +1,34 @@
 import { useState } from "react";
 import styles from "./order.module.css";
-import burgerImg from "../../assets/burgiiir.png"; 
 import Input from "../../components/input/Input";
 import Button from "../../components/button/Button";
-
-const initialItems = [
-  { id: 1, title: "Burger Dreams", price: 9.2, qty: 1, image: burgerImg },
-  { id: 2, title: "Burger Dreams", price: 9.2, qty: 1, image: burgerImg},
-  { id: 3, title: "Burger Dreams", price: 9.2, qty: 1, image: burgerImg },
-];
+import { useDispatch, useSelector } from "react-redux";
+import {
+  removeFromCart,
+  updateQty,
+  selectCartItems,
+} from "../../store/orderSlice";
 
 export default function OrderPage() {
-  const [items, setItems] = useState(initialItems);
+  const dispatch = useDispatch();
+  const items = useSelector(selectCartItems);
+
   const [street, setStreet] = useState("");
   const [house, setHouse] = useState("");
 
-  function removeItem(id) {
-    setItems((prev) => prev.filter((i) => i.id !== id));
-  }
+  const removeItem = (id) => {
+    dispatch(removeFromCart(id));
+  };
 
-  function changeQty(id, value) {
-    const q = Math.max(1, Number(value) || 1);
-    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, qty: q } : i)));
-  }
+  const changeQty = (id, value) => {
+    dispatch(updateQty({ id, qty: value }));
+  };
 
   function submit(e) {
     e.preventDefault();
+
+    if (items.length === 0) return;
+
     console.log({ items, street, house });
     alert("Order placed!");
   }
@@ -35,29 +38,39 @@ export default function OrderPage() {
       <h1 className={styles.title}>Finish your order</h1>
 
       <div className={styles.wrap}>
-        <div className={styles.list}>
-          {items.map((i) => (
-            <div key={i.id} className={styles.item}>
-              <img className={styles.itemImg} src={i.image} alt={i.title} />
+        {items.length === 0 ? (
+          <p className={styles.empty}>Your cart is empty. Add items from Menu.</p>
+        ) : (
+          <div className={styles.list}>
+            {items.map((i) => (
+              <div key={i.id} className={styles.item}>
+                <img className={styles.itemImg} src={i.image} alt={i.title} />
 
-              <p className={styles.itemTitle}>{i.title}</p>
+                <p className={styles.itemTitle}>{i.title}</p>
 
-              <div className={styles.price}>${i.price.toFixed(2)} USD</div>
+                <div className={styles.price}>
+                  ${Number(i.price || 0).toFixed(2)} USD
+                </div>
 
-              <input
-                className={styles.qty}
-                type="number"
-                min="1"
-                value={i.qty}
-                onChange={(e) => changeQty(i.id, e.target.value)}
-              />
+                <input
+                  className={styles.qty}
+                  type="number"
+                  min="1"
+                  value={i.qty}
+                  onChange={(e) => changeQty(i.id, e.target.value)}
+                />
 
-              <button className={styles.removeBtn} onClick={() => removeItem(i.id)}>
-                X
-              </button>
-            </div>
-          ))}
-        </div>
+                <Button
+                  type="button"
+                  className={styles.removeBtn}
+                  onClick={() => removeItem(i.id)}
+                >
+                  X
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
 
         <form className={styles.form} onSubmit={submit}>
           <div className={styles.field}>
@@ -65,7 +78,6 @@ export default function OrderPage() {
               id="street"
               label="Street"
               value={street}
-              placeholder=""
               onChange={(e) => setStreet(e.target.value)}
               labelClass={styles.label}
               inputClass={styles.input}
@@ -77,14 +89,13 @@ export default function OrderPage() {
               id="house"
               label="House"
               value={house}
-              placeholder=""
               onChange={(e) => setHouse(e.target.value)}
               labelClass={styles.label}
               inputClass={styles.input}
             />
           </div>
 
-          <Button type="submit" className={styles.orderBtn}>
+          <Button type="submit" className={styles.orderBtn} disabled={items.length === 0}>
             Order
           </Button>
         </form>

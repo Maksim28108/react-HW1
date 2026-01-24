@@ -5,6 +5,7 @@ import { MainPage } from "./pages/mainpage/MainPage";
 import Order from "./pages/order/Order";
 import RequireAuth from "./components/authorization/RequireAuth";
 import AuthListener from "./components/authorization/AuthListener";
+import MenuPage from "./components/Menu_tmp/Menu";
 
 export default function App() {
   return (
@@ -14,8 +15,8 @@ export default function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<MainPage />} />
-
           <Route path="login" element={<Login />} />
+          <Route path="menu" element={<MenuPage />} />
 
           <Route
             path="order"
@@ -25,9 +26,9 @@ export default function App() {
               </RequireAuth>
             }
           />
-
-          <Route path="*" element={<Navigate to="/login" replace />} />
         </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
