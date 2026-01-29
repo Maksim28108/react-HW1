@@ -55,68 +55,68 @@ export default function MenuPage({ onAddToCart }: Props) {
   }
 
   return (
-    <section className={styles.globalSection}>
+  <section className={styles.menuSection}>
+    <div className={styles.globalSection}>
       <main className={styles.menuWrap}>
-        <section className={styles.menuSection}>
-          <section className={styles.menuHero}>
-            <h1 className={styles.menuTitle}>Browse our menu</h1>
+        <section className={styles.menuHero}>
+          <h1 className={styles.menuTitle}>Browse our menu</h1>
 
-            <div className={styles.menuTabs}>
-              {categories.map((c: CategoryOption) => (
-                <Button
-                  key={c.value}
-                  type="button"
-                  className={`${styles.menuTab} ${
-                    category === c.value ? styles.menuTabActive : ""
-                  }`}
-                  onClick={() => {
-                    setCategory(c.value);
-                    setVisible(6);
-                  }}
-                >
-                  {c.label}
-                </Button>
+          <div className={styles.menuTabs}>
+            {categories.map((c: CategoryOption) => (
+              <Button
+                key={c.value}
+                type="button"
+                className={`${styles.menuTab} ${
+                  category === c.value ? styles.menuTabActive : ""
+                }`}
+                onClick={() => {
+                  setCategory(c.value);
+                  setVisible(6);
+                }}
+              >
+                {c.label}
+              </Button>
+            ))}
+          </div>
+        </section>
+
+        {loading && <p className={styles.menuLoading}>Loading…</p>}
+        {error && <p className={styles.menuError}>{error}</p>}
+
+        {!loading && !error && (
+          <>
+            <div className={styles.menuGrid}>
+              {filteredMeals.slice(0, visible).map((m) => (
+                <div key={String(m.id)} className={styles.gridItem}>
+                  <MealCard meal={m} />
+                </div>
               ))}
             </div>
-          </section>
 
-          {loading && <p className={styles.menuLoading}>Loading…</p>}
-          {error && <p className={styles.menuError}>{error}</p>}
-
-          {!loading && !error && (
-            <>
-              <div className={styles.menuGrid}>
-                {filteredMeals.slice(0, visible).map((m) => (
-                  <div key={String(m.id)} className={styles.gridItem}>
-                    <MealCard meal={m} />
-                  </div>
-                ))}
+            {filteredMeals.length === 0 ? (
+              <p className={styles.menuMore} style={{ color: "#6b7280" }}>
+                no items in this category
+              </p>
+            ) : canSeeMore ? (
+              <div className={styles.menuMore}>
+                <Button
+                  className={styles.menuMoreBtn}
+                  onClick={() =>
+                    setVisible((v) => Math.min(v + 6, filteredMeals.length))
+                  }
+                >
+                  See more
+                </Button>
               </div>
-
-              {filteredMeals.length === 0 ? (
-                <p className={styles.menuMore} style={{ color: "#6b7280" }}>
-                  no items in this category
-                </p>
-              ) : canSeeMore ? (
-                <div className={styles.menuMore}>
-                  <Button
-                    className={styles.menuMoreBtn}
-                    onClick={() =>
-                      setVisible((v) => Math.min(v + 6, filteredMeals.length))
-                    }
-                  >
-                    See more
-                  </Button>
-                </div>
-              ) : (
-                <p className={styles.menuMore} style={{ color: "#6b7280" }}>
-                  no more items
-                </p>
-              )}
-            </>
-          )}
-        </section>
+            ) : (
+              <p className={styles.menuMore} style={{ color: "#6b7280" }}>
+                no more items
+              </p>
+            )}
+          </>
+        )}
       </main>
-    </section>
-  );
+    </div>
+  </section>
+);
 }
