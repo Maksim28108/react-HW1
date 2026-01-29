@@ -1,32 +1,33 @@
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import styles from "./order.module.css";
 import Input from "../../components/input/Input";
 import Button from "../../components/button/Button";
 import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch } from "../../store/store";
 import {
   removeFromCart,
   updateQty,
   selectCartItems,
+  type CartItem, 
 } from "../../store/orderSlice";
 
 export default function OrderPage() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const items = useSelector(selectCartItems);
 
   const [street, setStreet] = useState("");
   const [house, setHouse] = useState("");
 
-  const removeItem = (id) => {
+  const removeItem = (id: CartItem["id"]) => {
     dispatch(removeFromCart(id));
   };
 
-  const changeQty = (id, value) => {
+  const changeQty = (id: CartItem["id"], value: number) => {
     dispatch(updateQty({ id, qty: value }));
   };
 
-  function submit(e) {
+  function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
     if (items.length === 0) return;
 
     console.log({ items, street, house });
@@ -44,7 +45,11 @@ export default function OrderPage() {
           <div className={styles.list}>
             {items.map((i) => (
               <div key={i.id} className={styles.item}>
-                <img className={styles.itemImg} src={i.image} alt={i.title} />
+                <img
+                  className={styles.itemImg}
+                  src={i.image ?? ""}
+                  alt={i.title}
+                />
 
                 <p className={styles.itemTitle}>{i.title}</p>
 
@@ -55,9 +60,11 @@ export default function OrderPage() {
                 <input
                   className={styles.qty}
                   type="number"
-                  min="1"
+                  min={1}
                   value={i.qty}
-                  onChange={(e) => changeQty(i.id, e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    changeQty(i.id, Math.max(1, Number(e.target.value) || 1))
+                  }
                 />
 
                 <Button
@@ -78,7 +85,10 @@ export default function OrderPage() {
               id="street"
               label="Street"
               value={street}
-              onChange={(e) => setStreet(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setStreet(e.target.value)
+              }
+              placeholder=""
               labelClass={styles.label}
               inputClass={styles.input}
             />
@@ -89,13 +99,20 @@ export default function OrderPage() {
               id="house"
               label="House"
               value={house}
-              onChange={(e) => setHouse(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setHouse(e.target.value)
+              }
+              placeholder=""
               labelClass={styles.label}
               inputClass={styles.input}
             />
           </div>
 
-          <Button type="submit" className={styles.orderBtn} disabled={items.length === 0}>
+          <Button
+            type="submit"
+            className={styles.orderBtn}
+            disabled={items.length === 0}
+          >
             Order
           </Button>
         </form>

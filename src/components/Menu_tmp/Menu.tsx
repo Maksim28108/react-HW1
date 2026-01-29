@@ -1,19 +1,27 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch } from "../../store/store";
+
 import {
   loadMeals,
   selectCategories,
   selectMeals,
   selectMealsError,
   selectMealsStatus,
+  type Meal,
+  type CategoryOption,
 } from "../../store/mealsSlice";
 
 import MealCard from "./MealCard";
 import Button from "../button/Button";
 import styles from "./menu.module.css";
 
-export default function MenuPage({ onAddToCart }) {
-  const dispatch = useDispatch();
+type Props = {
+  onAddToCart?: (price: number, qty: number) => void;
+};
+
+export default function MenuPage({ onAddToCart }: Props) {
+  const dispatch = useDispatch<AppDispatch>();
 
   const meals = useSelector(selectMeals);
   const status = useSelector(selectMealsStatus);
@@ -33,7 +41,6 @@ export default function MenuPage({ onAddToCart }) {
     }
   }, [categories, category]);
 
-
   const filteredMeals = useMemo(() => {
     if (!category) return meals;
     return meals.filter((m) => m.category === category);
@@ -42,9 +49,9 @@ export default function MenuPage({ onAddToCart }) {
   const canSeeMore = visible < filteredMeals.length;
   const loading = status === "loading";
 
-  function handleAdd(meal, qty) {
+  function handleAdd(meal: Meal, qty: number) {
     const q = Math.max(1, Number(qty) || 1);
-    onAddToCart?.(meal.price, q);
+    onAddToCart?.(Number(meal.price || 0), q);
   }
 
   return (
@@ -55,7 +62,7 @@ export default function MenuPage({ onAddToCart }) {
             <h1 className={styles.menuTitle}>Browse our menu</h1>
 
             <div className={styles.menuTabs}>
-              {categories.map((c) => (
+              {categories.map((c: CategoryOption) => (
                 <Button
                   key={c.value}
                   type="button"
@@ -80,8 +87,8 @@ export default function MenuPage({ onAddToCart }) {
             <>
               <div className={styles.menuGrid}>
                 {filteredMeals.slice(0, visible).map((m) => (
-                  <div key={m.id} className={styles.gridItem}>
-                    <MealCard meal={m} onAdd={handleAdd} />
+                  <div key={String(m.id)} className={styles.gridItem}>
+                    <MealCard meal={m} />
                   </div>
                 ))}
               </div>
