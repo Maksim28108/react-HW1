@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../store/store";
+import type { AppDispatch } from "../../store/store";
 
 import {
   loadMeals,
@@ -8,22 +8,13 @@ import {
   selectMeals,
   selectMealsError,
   selectMealsStatus,
+  type Meal,
+  type CategoryOption,
 } from "../../store/mealsSlice";
 
 import MealCard from "./MealCard";
 import Button from "../button/Button";
 import styles from "./menu.module.css";
-
-export type Meal = {
-  id: string | number;
-  title: string;
-  price: number;
-  image?: string;
-  category?: string;
-  description?: string;
-};
-
-type CategoryOption = { label: string; value: string };
 
 type Props = {
   onAddToCart?: (price: number, qty: number) => void;
@@ -32,15 +23,13 @@ type Props = {
 export default function MenuPage({ onAddToCart }: Props) {
   const dispatch = useDispatch<AppDispatch>();
 
-  const meals = useSelector<RootState, Meal[]>(selectMeals as any);
-  const status = useSelector<RootState, string>(selectMealsStatus as any);
-  const error = useSelector<RootState, string>(selectMealsError as any);
-  const categories = useSelector<RootState, CategoryOption[]>(
-    selectCategories as any,
-  );
+  const meals = useSelector(selectMeals);
+  const status = useSelector(selectMealsStatus);
+  const error = useSelector(selectMealsError);
+  const categories = useSelector(selectCategories);
 
-  const [visible, setVisible] = useState<number>(6);
-  const [category, setCategory] = useState<string>("");
+  const [visible, setVisible] = useState(6);
+  const [category, setCategory] = useState("");
 
   useEffect(() => {
     if (status === "idle") dispatch(loadMeals());
@@ -73,7 +62,7 @@ export default function MenuPage({ onAddToCart }: Props) {
             <h1 className={styles.menuTitle}>Browse our menu</h1>
 
             <div className={styles.menuTabs}>
-              {categories.map((c) => (
+              {categories.map((c: CategoryOption) => (
                 <Button
                   key={c.value}
                   type="button"

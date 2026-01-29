@@ -3,27 +3,25 @@ import { useDispatch } from "react-redux";
 import Button from "../button/Button";
 import placeholder from "../../assets/placeholderburger.png";
 import styles from "./menu.module.css";
-import { addToCart } from "../../store/orderSlice";
+import { addToCart, type CartItem } from "../../store/orderSlice";
 
-export type Meal = {
-  id: string | number;
-  title: string;
-  price: number;
-  image?: string;
-  category?: string;
-  description?: string;
+type MealCardProps = {
+  meal: Omit<CartItem, "qty"> & {
+    category?: string;
+    description?: string;
+  };
 };
 
-export default function MealCard({ meal }: { meal: Meal }) {
+export default function MealCard({ meal }: MealCardProps) {
   const dispatch = useDispatch();
-  const [qty, setQty] = useState<number>(1);
+  const [qty, setQty] = useState(1);
 
   function handleQtyChange(e: ChangeEvent<HTMLInputElement>) {
     setQty(Math.max(1, Number(e.target.value) || 1));
   }
 
   function handleAddClick() {
-    dispatch(addToCart({ item: meal, qty })); 
+    dispatch(addToCart({ item: meal, qty }));
   }
 
   return (
@@ -40,7 +38,9 @@ export default function MealCard({ meal }: { meal: Meal }) {
 
       <div className={styles.mealBody}>
         <h3 className={styles.mealTitle}>{meal.title}</h3>
-        <p className={styles.mealDesc}>{meal.description}</p>
+        {meal.description && (
+          <p className={styles.mealDesc}>{meal.description}</p>
+        )}
 
         <div className={styles.mealActions}>
           <input
