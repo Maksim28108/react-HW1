@@ -1,0 +1,41 @@
+{
+  "home": {
+    "titlePrefix": "Вкусная еда и навынос,",
+    "titleAccent": "доставим",
+    "titleSuffix": "прямо к вашей двери.",
+    "text": "Lorem Ipsum — это текст-заполнитель для полиграфии и набора. Он используется как стандартный текст с 1500-х годов.",
+    "cta": "Сделать заказ",
+    "trustScore": "{{rating}} из 5",
+    "trustBasedOn": "на основе {{reviews}} отзывов"
+  },
+
+  "header": {
+    "login": "Вход",
+    "home": "Главная",
+    "menu": "Меню",
+    "company": "О компании",
+    "themeAria": "Переключить тему. Текущая тема: {{theme}}"
+  },
+
+  "footer": {
+    "description": "Шаблон для доставки еды\nдля малого и среднего бизнеса.",
+    "company": "Компания",
+    "template": "Шаблон",
+    "flowbase": "Flowbase",
+
+    "home": "Главная",
+    "order": "Заказ",
+    "faq": "Вопросы",
+    "contact": "Контакты",
+
+    "styleGuide": "Гайд по стилю",
+    "changelog": "История изменений",
+    "licence": "Лицензия",
+    "webflowUni": "Университет Webflow",
+
+    "moreCloneables": "Больше шаблонов",
+
+    "builtBy": "Создано",
+    "poweredBy": "Работает на"
+  }
+}

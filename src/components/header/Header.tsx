@@ -5,44 +5,49 @@ import littlecart from "../../assets/littlecart.svg";
 import Button from "../button/Button";
 import { useSelector } from "react-redux";
 import { selectCartCount, selectCartTotal } from "../../store/orderSlice";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { useTheme } from "../../theme/ThemeContext";
+import { useTranslation } from "react-i18next";
+import {LanguageDropdown} from "../languagedropdown/LanguageDropdown";
 
 export default function Header() {
   const count = useSelector(selectCartCount);
   const total = useSelector(selectCartTotal);
 
-  const { mode, resolved, toggle, setMode } = useTheme();
+  const { resolved, toggle } = useTheme();
+  const { t } = useTranslation("common");
 
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <a href="/" className={styles.logoWrap}>
+        <Link to="/" className={styles.logoWrap}>
           <img src={headerIcon} alt="logo" className={styles.logo} />
-        </a>
+        </Link>
 
         <div className={styles.navcontainer}>
           <nav className={styles.nav}>
             <NavLink to="/login" className={styles.link}>
-              Login
+              {t("header.login")}
             </NavLink>
             <NavLink to="/" className={styles.link}>
-              Home
+              {t("header.home")}
             </NavLink>
             <NavLink to="/menu" className={styles.link}>
-              Menu
+              {t("header.menu")}
             </NavLink>
             <NavLink to="/company" className={styles.link}>
-              Company
+              {t("header.company")}
             </NavLink>
           </nav>
         </div>
 
-        <div className={styles.themeSwitch}>
+        <div className={styles.controls}>
+          <LanguageDropdown />
+
           <Button
             type="button"
             onClick={toggle}
-            aria-label={`Switch theme. Current theme is ${resolved}`}
+            aria-label={t("header.themeAria", { theme: resolved })}
             className={styles.themeBtn}
           >
             {resolved === "dark" ? "🌙" : "☀️"}
