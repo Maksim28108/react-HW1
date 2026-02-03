@@ -1,0 +1,41 @@
+{
+  "home": {
+    "titlePrefix": "Skanaus maisto ir išsinešimo,",
+    "titleAccent": "pristatome",
+    "titleSuffix": "iki jūsų durų.",
+    "text": "Lorem Ipsum yra fiktyvus spaudos ir maketavimo tekstas. Jis naudojamas kaip standartas nuo 1500-ųjų.",
+    "cta": "Užsakyti",
+    "trustScore": "{{rating}} iš 5",
+    "trustBasedOn": "pagal {{reviews}} atsiliepimus"
+  },
+
+  "header": {
+    "login": "Prisijungti",
+    "home": "Pagrindinis",
+    "menu": "Meniu",
+    "company": "Įmonė",
+    "themeAria": "Keisti temą. Dabartinė tema: {{theme}}"
+  },
+
+  "footer": {
+    "description": "Maisto išsinešimo ir pristatymo šablonas\nmažam ir vidutiniam verslui.",
+    "company": "Įmonė",
+    "template": "Šablonas",
+    "flowbase": "Flowbase",
+
+    "home": "Pagrindinis",
+    "order": "Užsakymas",
+    "faq": "DUK",
+    "contact": "Kontaktai",
+
+    "styleGuide": "Stiliaus gidas",
+    "changelog": "Pakeitimų žurnalas",
+    "licence": "Licencija",
+    "webflowUni": "Webflow universitetas",
+
+    "moreCloneables": "Daugiau šablonų",
+
+    "builtBy": "Sukurta",
+    "poweredBy": "Naudojant"
+  }
+}

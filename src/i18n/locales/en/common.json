@@ -1,0 +1,41 @@
+{
+  "home": {
+    "titlePrefix": "Beautiful food & takeaway,",
+    "titleAccent": "delivered",
+    "titleSuffix": "to your door.",
+    "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500.",
+    "cta": "Place an Order",
+    "trustScore": "{{rating}} out of 5",
+    "trustBasedOn": "based on {{reviews}} reviews"
+  },
+
+  "header": {
+    "login": "Login",
+    "home": "Home",
+    "menu": "Menu",
+    "company": "Company",
+    "themeAria": "Switch theme. Current theme is {{theme}}"
+  },
+
+  "footer": {
+    "description": "Takeaway & Delivery template\nfor small - medium businesses.",
+    "company": "Company",
+    "template": "Template",
+    "flowbase": "Flowbase",
+
+    "home": "Home",
+    "order": "Order",
+    "faq": "FAQ",
+    "contact": "Contact",
+
+    "styleGuide": "Style Guide",
+    "changelog": "Changelog",
+    "licence": "Licence",
+    "webflowUni": "Webflow University",
+
+    "moreCloneables": "More Cloneables",
+
+    "builtBy": "Built by",
+    "poweredBy": "Powered by"
+  }
+}

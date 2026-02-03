@@ -125,3 +125,54 @@
     cursor: pointer;
     margin-top: 10px;
 }
+
+html[data-theme="dark"] .page {
+  background: var(--bg);
+}
+
+html[data-theme="dark"] .item {
+  background: var(--surface);
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+
+html[data-theme="dark"] .itemTitle {
+  color: var(--text);
+}
+
+html[data-theme="dark"] .price {
+  color: var(--accent);
+}
+
+html[data-theme="dark"] .qty {
+  background: var(--bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+html[data-theme="dark"] .label {
+  color: var(--text);
+}
+
+html[data-theme="dark"] .input {
+  background: var(--bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+html[data-theme="dark"] .input:focus {
+  border-color: var(--accent);
+}
+
+html[data-theme="dark"] .removeBtn,
+html[data-theme="dark"] .orderBtn {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+html[data-theme="dark"] .removeBtn:hover,
+html[data-theme="dark"] .orderBtn:hover {
+  border-color: var(--accent);
+}
+

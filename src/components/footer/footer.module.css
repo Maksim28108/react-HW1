@@ -1,10 +1,25 @@
-.footer{
-    background-image: url('../../assets/footerbackground.png');
-    background-size: cover;
-    font-family: "Inter", sans-serif;
-    font-weight: 400;
-    font-size: 15px;
+.footer {
+  position: relative;
+  background-image: url("../../assets/footerbackground.png");
+  background-size: cover;
+
+  color: var(--text);
+  background-color: var(--bg);
 }
+
+html[data-theme="dark"] .footer {
+  background-image: none;
+  background-color: var(--surface); /* или var(--bg) */
+}
+
+
+.top,
+.bottom,
+.line {
+  position: relative;
+  z-index: 1;
+}
+
 
 .top{
     width: 1200px;
@@ -32,11 +47,7 @@
     transition: 0.3s;
 }
 
-.description{
-    line-height: 1.8;
-    letter-spacing: 0.02em;
-    color: #546285;
-}
+.description { color: var(--muted); }
 
 .columns{
     display: flex; gap: 16px; flex-wrap: wrap;
@@ -50,21 +61,9 @@
     gap: 28px;               
 }
 
-.column h4{
-    font-weight: 400;
-    font-size: 13px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #08090a;
-    margin-bottom: 12px;     
-}
+.column h4 { color: var(--text); }
 
-.column a{
-    text-decoration: none;
-    color: #546285;
-    line-height: 1.35;
-    padding: 0;              
-}
+.column a { color: var(--muted); }
 
 .line{
     border: none;
@@ -84,9 +83,7 @@
     flex-wrap: wrap;
 }
 
-.copy{
-    font-size: 14px; color: #627680;
-}
+.copy { color: var(--muted); }
 
 .copy a{
     color: #35b8be; text-decoration: none;
